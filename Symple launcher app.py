@@ -21,6 +21,11 @@ l_l = []
 l_l_s = []
 l_l_lib = []
 
+l1 = "forge"
+l2 = "fabric"
+l3 = "quilt"
+l4 = "neoforge"
+
 fabric_loader_new = minecraft_launcher_lib.fabric.FabricLoader
 quilt_loader_new = minecraft_launcher_lib.quilt.QuiltLoader
 
@@ -104,7 +109,7 @@ callback = {
         "setMax": lambda value: maximum(max_value, value)
 }
 def install_mc(versionc, loader):
-    if loader == "forge":
+    if loader.replace(" ", "").lower() == l1:
         if minecraft_launcher_lib.forge.supports_automatic_install(versionc):
             print(l_l_s[2])
             sys.exit()
@@ -115,7 +120,7 @@ def install_mc(versionc, loader):
         # support = minecraft_launcher_lib.forge.support_automatic_install(versionc)
 
 
-    elif loader == "fabric":
+    elif loader.replace(" ", "").lower() == l2:
         if minecraft_launcher_lib.fabric.is_minecraft_version_supported(versionc):
             pass
 
@@ -125,7 +130,7 @@ def install_mc(versionc, loader):
 
         minecraft_launcher_lib.fabric.install_fabric(str(versionc), minecraft_directory, callback=callback)
 
-    elif loader == "quilt":
+    elif loader.replace(" ", "").lower() == l3:
         if minecraft_launcher_lib.quilt.is_minecraft_version_supported(versionc):
             pass
 
@@ -155,27 +160,26 @@ def launch_mc(uuidc, username):
     if uuidc == "" or " ":
         uuidc = uuid1()
 
-
     options = {
         'username': str(username),
-       'uuid': str(uuidc),
-       'token': str(access_token)
+        'uuid': str(uuidc),
+        'token': str(access_token),
+        'jvmArguments': ("-Xmx" + ram_for_java + "G", "-Xms128m"),
+        'gameDirectory': str(minecraft_directory)
     }
-    options["jvmArguments"] = ["-Xmx" + ram_for_java + "G", "-Xms128m"]
-    options["gameDirectory"] = minecraft_directory
 
-    if loader == "fabric":
+    if loader.replace(" ", "").lower() == l2:
         pass
         subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
             version="fabric-loader-" + str(fabric_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
             options=options))
 
-    if loader == "forge":
+    if loader.replace(" ", "").lower() == l1:
         subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
             version=str(versionc) + "-forge-" + ffv.replace(versionc + "-", ""), minecraft_directory=minecraft_directory,
             options=options))
 
-    if loader == "quilt":
+    if loader.replace(" ", "").lower() == l3:
         subprocess.call(minecraft_launcher_lib.command.get_minecraft_command(
             version="quilt-loader-" + str(quilt_loader_new) + "-" + str(versionc), minecraft_directory=minecraft_directory,
             options=options))
